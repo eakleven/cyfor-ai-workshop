@@ -82,11 +82,16 @@ const formatDateTime = (value: string) =>
     timeStyle: "short",
   });
 
-const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
+const csvEscape = (value: string | number) => {
+  const stringValue = String(value);
+  const safeValue = /^\s*[=+\-@]/.test(stringValue) ? `'${stringValue}` : stringValue;
+
+  return `"${safeValue.replace(/"/g, '""')}"`;
+};
 
 const formatCsvTimestamp = (value: string) => {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toISOString();
+  return Number.isNaN(date.getTime()) ? value : formatDateTime(value);
 };
 
 const RESERVATION_EXPORT_HEADERS = [
