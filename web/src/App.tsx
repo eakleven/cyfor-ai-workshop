@@ -105,39 +105,39 @@ export default function App() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-10 text-slate-900">
+    <main className="min-h-screen bg-fv-bg px-4 py-10 text-fv-text">
       <div className="mx-auto max-w-xl space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-2xl font-semibold">Resources</h1>
-          <p className="text-sm text-slate-600">
-            Manage bookable resources. Add, edit, or remove entries below.
+        <header className="space-y-1 border-b border-fv-border pb-4">
+          <h1 className="text-xl font-normal tracking-wide">Ressursstyring</h1>
+          <p className="text-sm text-fv-text-muted">
+            Administrer bookbare ressurser. Legg til, rediger eller fjern oppføringer nedenfor.
           </p>
         </header>
 
         <form
-          className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+          className="flex flex-col gap-3 border border-fv-border bg-fv-card p-4"
           onSubmit={handleCreate}
         >
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Resource name"
+            placeholder="Ressursnavn"
             maxLength={120}
-            className="rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus:border-slate-500"
+            className="border border-fv-border bg-fv-card px-3 py-2 text-base text-fv-text outline-none focus:border-fv-green"
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description (optional)"
+            placeholder="Beskrivelse (valgfritt)"
             maxLength={500}
             rows={2}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 resize-none"
+            className="resize-none border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
           />
           <div className="flex gap-3">
             <select
               value={type}
               onChange={(e) => setType(e.target.value as CreateItemType)}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
             >
               {RESOURCE_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
@@ -146,94 +146,94 @@ export default function App() {
             <button
               type="submit"
               disabled={!trimmedTitle || createMutation.isPending}
-              className="flex-1 rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-slate-300"
+              className="flex-1 bg-fv-green px-4 py-2 text-sm font-medium text-white hover:bg-fv-green-mid disabled:cursor-not-allowed disabled:bg-fv-border"
             >
-              {createMutation.isPending ? "Adding..." : "Add resource"}
+              {createMutation.isPending ? "Legger til..." : "Legg til ressurs"}
             </button>
           </div>
         </form>
 
         {createMutation.isError && (
-          <p className="text-sm text-rose-600">
-            Could not add the resource: {createMutation.error.message}
+          <p className="text-sm text-fv-red">
+            Kunne ikke legge til ressursen: {createMutation.error.message}
           </p>
         )}
         {deleteMutation.isError && (
-          <p className="text-sm text-rose-600">
-            Could not remove the resource: {deleteMutation.error.message}
+          <p className="text-sm text-fv-red">
+            Kunne ikke fjerne ressursen: {deleteMutation.error.message}
           </p>
         )}
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <section className="border border-fv-border bg-fv-card p-4">
           <div className="flex gap-2">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search resources..."
-              className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              placeholder="Søk i ressurser..."
+              className="flex-1 border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
             />
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as GetItemsType | "")}
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
             >
-              <option value="">All types</option>
+              <option value="">Alle typer</option>
               {RESOURCE_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
           </div>
-          <h2 className="mt-3 text-sm font-medium text-slate-700">All resources</h2>
+          <h2 className="mt-3 text-sm font-medium text-fv-text-muted uppercase tracking-wider">Alle ressurser</h2>
 
           {resourcesQuery.isPending && (
-            <p className="mt-3 text-sm text-slate-600">Loading resources...</p>
+            <p className="mt-3 text-sm text-fv-text-muted">Laster ressurser...</p>
           )}
           {resourcesQuery.isError && (
-            <p className="mt-3 text-sm text-rose-600">
-              Could not load resources: {resourcesQuery.error.message}
+            <p className="mt-3 text-sm text-fv-red">
+              Kunne ikke laste ressurser: {resourcesQuery.error.message}
             </p>
           )}
 
           {!resourcesQuery.isPending && !resourcesQuery.isError && (
             resources.length > 0 ? (
-              <ul className="mt-3 divide-y divide-slate-200">
+              <ul className="mt-3 divide-y divide-fv-border">
                 {resources.map((resource) => (
                   <li key={resource.id} className="flex items-start justify-between gap-3 py-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm">{resource.title}</span>
-                        <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                        <span className="text-sm font-medium text-fv-text">{resource.title}</span>
+                        <span className="shrink-0 border border-fv-sage px-2 py-0.5 text-xs text-fv-green-mid">
                           {resource.type}
                         </span>
                       </div>
                       {resource.description && (
-                        <p className="mt-0.5 truncate text-xs text-slate-500">{resource.description}</p>
+                        <p className="mt-0.5 truncate text-xs text-fv-text-muted">{resource.description}</p>
                       )}
                     </div>
                     <div className="flex shrink-0 gap-2">
                       <button
                         type="button"
                         onClick={() => openEdit(resource)}
-                        className="rounded-md border border-slate-300 px-3 py-1 text-sm text-slate-700 hover:bg-slate-50"
+                        className="border border-fv-border px-3 py-1 text-sm text-fv-text hover:border-fv-green hover:text-fv-green"
                       >
-                        Edit
+                        Rediger
                       </button>
                       <button
                         type="button"
                         onClick={() => handleRemove(resource.id)}
                         disabled={deleteMutation.isPending}
-                        className="rounded-md border border-slate-300 px-3 py-1 text-sm text-slate-700 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+                        className="border border-fv-border px-3 py-1 text-sm text-fv-text hover:border-fv-red hover:text-fv-red disabled:cursor-not-allowed disabled:border-fv-border disabled:text-fv-text-muted"
                       >
                         {deleteMutation.isPending && deletingId === resource.id
-                          ? "Removing..."
-                          : "Remove"}
+                          ? "Fjerner..."
+                          : "Fjern"}
                       </button>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="mt-3 text-sm text-slate-600">No resources yet.</p>
+              <p className="mt-3 text-sm text-fv-text-muted">Ingen ressurser registrert.</p>
             )
           )}
         </section>
@@ -241,56 +241,56 @@ export default function App() {
 
       {editingResource && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-fv-text/40 px-4"
           onClick={(e) => { if (e.target === e.currentTarget) setEditingResource(null); }}
         >
-          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl">
-            <h2 className="mb-4 text-base font-semibold">Edit resource</h2>
+          <div className="w-full max-w-md border border-fv-border bg-fv-card p-6">
+            <h2 className="mb-4 text-base font-medium text-fv-text">Rediger ressurs</h2>
             <form onSubmit={handleUpdate} className="flex flex-col gap-3">
               <input
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
-                placeholder="Resource name"
+                placeholder="Ressursnavn"
                 maxLength={120}
                 required
-                className="rounded-md border border-slate-300 px-3 py-2 text-base outline-none focus:border-slate-500"
+                className="border border-fv-border bg-fv-card px-3 py-2 text-base text-fv-text outline-none focus:border-fv-green"
               />
               <textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                placeholder="Description (optional)"
+                placeholder="Beskrivelse (valgfritt)"
                 maxLength={500}
                 rows={3}
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500 resize-none"
+                className="resize-none border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
               />
               <select
                 value={editType}
                 onChange={(e) => setEditType(e.target.value as UpdateItemType)}
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+                className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
               >
                 {RESOURCE_TYPES.map((t) => (
                   <option key={t} value={t}>{t}</option>
                 ))}
               </select>
               {updateMutation.isError && (
-                <p className="text-sm text-rose-600">
-                  Could not save: {updateMutation.error.message}
+                <p className="text-sm text-fv-red">
+                  Kunne ikke lagre: {updateMutation.error.message}
                 </p>
               )}
               <div className="flex justify-end gap-2 pt-1">
                 <button
                   type="button"
                   onClick={() => setEditingResource(null)}
-                  className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-700"
+                  className="border border-fv-border px-4 py-2 text-sm text-fv-text hover:border-fv-green"
                 >
-                  Cancel
+                  Avbryt
                 </button>
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300"
+                  className="bg-fv-green px-4 py-2 text-sm font-medium text-white hover:bg-fv-green-mid disabled:bg-fv-border"
                 >
-                  {updateMutation.isPending ? "Saving..." : "Save"}
+                  {updateMutation.isPending ? "Lagrer..." : "Lagre"}
                 </button>
               </div>
             </form>
