@@ -34,7 +34,22 @@ This repo uses a code-gen pipeline: `api/src/app.ts` (Zod schemas) → `api/open
 - [ ] Edge cases handled: resource not found, invalid input
 - [ ] No risky assumptions that could silently break in production
 
-## 5. Verdict
+## 5. Post comments
+
+After completing the checklist, post findings to the PR:
+
+```bash
+# General review comment (works even on your own PR)
+gh pr comment <number> --body "<findings>"
+
+# Approve or request changes (only works on others' PRs)
+gh pr review <number> --approve --body "<summary>"
+gh pr review <number> --request-changes --body "<summary>"
+```
+
+Format the comment with a section per checklist area. Mark each ✅ or flag issues inline with `file:line` references. Include the verdict at the bottom.
+
+## 6. Verdict
 
 Approve, request changes, or flag blockers. Reference specific `file:line` for each issue.
 Severity guide: missing regeneration or failing typecheck = block; style/naming = comment only.
