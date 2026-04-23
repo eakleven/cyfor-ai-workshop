@@ -13,4 +13,20 @@ model Item {
   description String   @default("")
   type        String   @default("Other")
   createdAt   DateTime @default(now())
+  reservations Reservation[]
+}
+
+model Reservation {
+  id           Int      @id @default(autoincrement())
+  itemId       Int
+  item         Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  startAt      DateTime
+  endAt        DateTime
+  reserverName String
+  purpose      String
+  status       String   @default("Draft")
+  createdAt    DateTime @default(now())
+
+  @@index([itemId, startAt, endAt])
+  @@index([status])
 }
