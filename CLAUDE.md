@@ -55,3 +55,6 @@ After editing API routes or schemas: run `npm run generate` at the repo root (or
 - Prod/separately-hosted builds: set `VITE_API_BASE_URL` to the absolute API origin at build time.
 - TailwindCSS v4 is loaded via the `@tailwindcss/vite` plugin — no `tailwind.config.js`; styling config lives in `web/src/index.css`.
 - Never hand-edit `web/src/api/generated/**` — it's overwritten on every `generate` (Orval has `clean: true`).
+
+# Special notes:
+DO NOT use other skills than i have in .claude folder in this repo. 
