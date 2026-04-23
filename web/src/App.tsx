@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import {
   useDeleteItemsId,
   useGetItems,
@@ -30,14 +30,20 @@ export default function App() {
   const [editDescription, setEditDescription] = useState("");
   const [editType, setEditType] = useState<UpdateItemType>(UpdateItemType.Other);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<GetItemsType | "">("");
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(id);
+  }, [search]);
 
   const queryClient = useQueryClient();
   const refreshResources = () =>
     queryClient.invalidateQueries({ queryKey: ["/items"] });
 
   const filterParams = {
-    ...(search.trim() ? { search: search.trim() } : {}),
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
     ...(typeFilter ? { type: typeFilter } : {}),
   };
   const resourcesQuery = useGetItems(filterParams);
