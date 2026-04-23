@@ -8,11 +8,12 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "prisma:sync": "prisma db push --skip-generate",
-    "start": "npm run prisma:generate && npm run prisma:sync && node dist/src/index.js"
+    "start": "npm run prisma:generate && npm run prisma:sync && node dist/src/index.js",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@hono/zod-openapi": "^0.19.10",
     "@hono/node-server": "^1.19.14",
+    "@hono/zod-openapi": "^0.19.10",
     "@prisma/client": "^6.16.2",
     "hono": "^4.12.14",
     "zod": "^3.25.76"
@@ -21,6 +22,7 @@
     "@types/node": "^20.11.17",
     "prisma": "^6.16.2",
     "tsx": "^4.7.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.5"
   }
 }
