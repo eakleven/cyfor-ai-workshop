@@ -21,6 +21,13 @@ type Resource = {
 
 const RESOURCE_TYPES = ["Room", "Equipment", "Vehicle", "Other"] as const;
 
+const TYPE_LABELS: Record<typeof RESOURCE_TYPES[number], string> = {
+  Room: "Rom",
+  Equipment: "Utstyr",
+  Vehicle: "Kjøretøy",
+  Other: "Annet",
+};
+
 export default function App() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -140,7 +147,7 @@ export default function App() {
               className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
             >
               {RESOURCE_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>{TYPE_LABELS[t]}</option>
               ))}
             </select>
             <button
@@ -179,7 +186,7 @@ export default function App() {
             >
               <option value="">Alle typer</option>
               {RESOURCE_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>{TYPE_LABELS[t]}</option>
               ))}
             </select>
           </div>
@@ -203,7 +210,7 @@ export default function App() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium text-fv-text">{resource.title}</span>
                         <span className="shrink-0 border border-fv-sage px-2 py-0.5 text-xs text-fv-green-mid">
-                          {resource.type}
+                          {TYPE_LABELS[resource.type as typeof RESOURCE_TYPES[number]] ?? resource.type}
                         </span>
                       </div>
                       {resource.description && (
@@ -241,7 +248,7 @@ export default function App() {
 
       {editingResource && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-fv-text/40 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
           onClick={(e) => { if (e.target === e.currentTarget) setEditingResource(null); }}
         >
           <div className="w-full max-w-md border border-fv-border bg-fv-card p-6">
@@ -269,7 +276,7 @@ export default function App() {
                 className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text outline-none focus:border-fv-green"
               >
                 {RESOURCE_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
+                  <option key={t} value={t}>{TYPE_LABELS[t]}</option>
                 ))}
               </select>
               {updateMutation.isError && (

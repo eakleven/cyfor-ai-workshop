@@ -89,9 +89,11 @@ border-radius: 2px or 0px
 
 ### Type badges
 ```
-background: fv-sage (#8AA88A) at ~15% opacity, or solid fv-sage
-color: fv-green (#2B3829)
+border: 1px solid fv-sage (#8AA88A)
+background: none
+color: fv-green-mid (#4A6044)
 font: Arial 11px, normal weight
+padding: 2px 8px
 ```
 
 ### Error messages

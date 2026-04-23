@@ -15,8 +15,8 @@
 }
 
 :root {
-  color: #2a2a25;
-  background-color: #f2f2ed;
+  color: var(--color-fv-text);
+  background-color: var(--color-fv-bg);
   font-family: var(--font-sans);
 }
 
@@ -34,5 +34,5 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f2f2ed;
+  background-color: var(--color-fv-bg);
 }
