@@ -1,6 +1,5 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import {
-  getGetItemsQueryKey,
   useDeleteItemsId,
   useGetItems,
   usePatchItemsId,
@@ -8,6 +7,7 @@ import {
   CreateItemType,
   UpdateItemType,
   ItemType,
+  GetItemsType,
 } from "./api";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -29,12 +29,24 @@ export default function App() {
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editType, setEditType] = useState<UpdateItemType>(UpdateItemType.Other);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState<GetItemsType | "">("");
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(id);
+  }, [search]);
 
   const queryClient = useQueryClient();
   const refreshResources = () =>
-    queryClient.invalidateQueries({ queryKey: getGetItemsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: ["/items"] });
 
-  const resourcesQuery = useGetItems();
+  const filterParams = {
+    ...(debouncedSearch ? { search: debouncedSearch } : {}),
+    ...(typeFilter ? { type: typeFilter } : {}),
+  };
+  const resourcesQuery = useGetItems(filterParams);
   const createMutation = usePostItems({
     mutation: {
       onSuccess: async () => {
@@ -153,7 +165,25 @@ export default function App() {
         )}
 
         <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-medium text-slate-700">All resources</h2>
+          <div className="flex gap-2">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search resources..."
+              className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+            />
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as GetItemsType | "")}
+              className="rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+            >
+              <option value="">All types</option>
+              {RESOURCE_TYPES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <h2 className="mt-3 text-sm font-medium text-slate-700">All resources</h2>
 
           {resourcesQuery.isPending && (
             <p className="mt-3 text-sm text-slate-600">Loading resources...</p>

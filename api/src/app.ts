@@ -25,6 +25,17 @@ const ItemListResponseSchema = z.object({
   items: z.array(ItemSchema)
 }).openapi('ItemListResponse')
 
+const ListItemsQuerySchema = z.object({
+  search: z.string().optional().openapi({
+    param: { name: 'search', in: 'query' },
+    example: 'Meeting Room'
+  }),
+  type: z.enum(RESOURCE_TYPES).optional().openapi({
+    param: { name: 'type', in: 'query' },
+    example: 'Room'
+  })
+}).openapi('ListItemsQuery')
+
 const CreateItemSchema = z.object({
   title: z.string().trim().min(1).max(120).openapi({ example: 'Meeting Room A' }),
   description: z.string().trim().max(500).default('').openapi({ example: 'Seats 10, projector included' }),
@@ -77,6 +88,9 @@ const listItemsRoute = createRoute({
   method: 'get',
   path: '/items',
   tags: ['Items'],
+  request: {
+    query: ListItemsQuerySchema
+  },
   responses: {
     200: {
       description: 'List persisted items',
@@ -218,7 +232,18 @@ app.openapi(healthRoute, (c) => {
 })
 
 app.openapi(listItemsRoute, async (c) => {
+  const { search, type } = c.req.valid('query')
+
   const items = await prisma.item.findMany({
+    where: {
+      ...(type ? { type } : {}),
+      ...(search ? {
+        OR: [
+          { title: { contains: search } },
+          { description: { contains: search } }
+        ]
+      } : {})
+    },
     orderBy: {
       createdAt: 'desc'
     }
