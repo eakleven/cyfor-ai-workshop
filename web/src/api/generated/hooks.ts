@@ -42,6 +42,16 @@ export interface HealthResponse {
   status: HealthResponseStatus;
 }
 
+export type ItemType = typeof ItemType[keyof typeof ItemType];
+
+
+export const ItemType = {
+  Room: 'Room',
+  Equipment: 'Equipment',
+  Vehicle: 'Vehicle',
+  Other: 'Other',
+} as const;
+
 export interface Item {
   id: number;
   /**
@@ -49,6 +59,9 @@ export interface Item {
      * @maxLength 120
      */
   title: string;
+  /** @maxLength 500 */
+  description: string;
+  type: ItemType;
   createdAt: string;
 }
 
@@ -56,12 +69,50 @@ export interface ItemListResponse {
   items: Item[];
 }
 
+export type CreateItemType = typeof CreateItemType[keyof typeof CreateItemType];
+
+
+export const CreateItemType = {
+  Room: 'Room',
+  Equipment: 'Equipment',
+  Vehicle: 'Vehicle',
+  Other: 'Other',
+} as const;
+
 export interface CreateItem {
   /**
      * @minLength 1
      * @maxLength 120
      */
   title: string;
+  /** @maxLength 500 */
+  description?: string;
+  type?: CreateItemType;
+}
+
+export interface NotFound {
+  message: string;
+}
+
+export type UpdateItemType = typeof UpdateItemType[keyof typeof UpdateItemType];
+
+
+export const UpdateItemType = {
+  Room: 'Room',
+  Equipment: 'Equipment',
+  Vehicle: 'Vehicle',
+  Other: 'Other',
+} as const;
+
+export interface UpdateItem {
+  /**
+     * @minLength 1
+     * @maxLength 120
+     */
+  title?: string;
+  /** @maxLength 500 */
+  description?: string;
+  type?: UpdateItemType;
 }
 
 export const get = (
@@ -437,4 +488,63 @@ const {mutation: mutationOptions} = options ?
         TContext
       > => {
       return useMutation(getDeleteItemsIdMutationOptions(options), queryClient);
+    }
+
+export const patchItemsId = (
+    id: number,
+    updateItem: UpdateItem,
+ signal?: AbortSignal
+) => {
+
+
+      return customClient<Item>(
+      {url: `/items/${id}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateItem, signal
+    },
+      );
+    }
+
+
+
+export const getPatchItemsIdMutationOptions = <TError = ErrorType<NotFound>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchItemsId>>, TError,{id: number;data: UpdateItem}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof patchItemsId>>, TError,{id: number;data: UpdateItem}, TContext> => {
+
+const mutationKey = ['patchItemsId'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof patchItemsId>>, {id: number;data: UpdateItem}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  patchItemsId(id,data,)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PatchItemsIdMutationResult = NonNullable<Awaited<ReturnType<typeof patchItemsId>>>
+    export type PatchItemsIdMutationBody = UpdateItem
+    export type PatchItemsIdMutationError = ErrorType<NotFound>
+
+    export const usePatchItemsId = <TError = ErrorType<NotFound>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof patchItemsId>>, TError,{id: number;data: UpdateItem}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof patchItemsId>>,
+        TError,
+        {id: number;data: UpdateItem},
+        TContext
+      > => {
+      return useMutation(getPatchItemsIdMutationOptions(options), queryClient);
     }

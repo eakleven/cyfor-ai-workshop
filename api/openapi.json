@@ -47,7 +47,22 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 120,
-            "example": "Build a workshop API"
+            "example": "Meeting Room A"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "example": "Seats 10, projector included"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Room",
+              "Equipment",
+              "Vehicle",
+              "Other"
+            ],
+            "example": "Room"
           },
           "createdAt": {
             "type": "string",
@@ -58,6 +73,8 @@
         "required": [
           "id",
           "title",
+          "description",
+          "type",
           "createdAt"
         ]
       },
@@ -82,12 +99,66 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 120,
-            "example": "Build a workshop API"
+            "example": "Meeting Room A"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "default": "",
+            "example": "Seats 10, projector included"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Room",
+              "Equipment",
+              "Vehicle",
+              "Other"
+            ],
+            "default": "Other",
+            "example": "Room"
           }
         },
         "required": [
           "title"
         ]
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "UpdateItem": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "example": "Meeting Room A"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "example": "Seats 10, projector included"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "Room",
+              "Equipment",
+              "Vehicle",
+              "Other"
+            ],
+            "example": "Room"
+          }
+        }
       }
     },
     "parameters": {}
@@ -198,6 +269,56 @@
         "responses": {
           "204": {
             "description": "Remove a persisted item"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Items"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "exclusiveMinimum": true,
+              "example": 1
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update a persisted resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
           }
         }
       }
