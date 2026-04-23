@@ -11,9 +11,13 @@ const HealthResponseSchema = z.object({
   status: z.literal('ok')
 }).openapi('HealthResponse')
 
+const RESOURCE_TYPES = ['Room', 'Equipment', 'Vehicle', 'Other'] as const
+
 const ItemSchema = z.object({
   id: z.number().int().openapi({ example: 1 }),
-  title: z.string().min(1).max(120).openapi({ example: 'Build a workshop API' }),
+  title: z.string().min(1).max(120).openapi({ example: 'Meeting Room A' }),
+  description: z.string().max(500).openapi({ example: 'Seats 10, projector included' }),
+  type: z.enum(RESOURCE_TYPES).openapi({ example: 'Room' }),
   createdAt: z.string().datetime().openapi({ example: '2024-01-01T00:00:00.000Z' })
 }).openapi('Item')
 
@@ -22,7 +26,9 @@ const ItemListResponseSchema = z.object({
 }).openapi('ItemListResponse')
 
 const CreateItemSchema = z.object({
-  title: z.string().trim().min(1).max(120).openapi({ example: 'Build a workshop API' })
+  title: z.string().trim().min(1).max(120).openapi({ example: 'Meeting Room A' }),
+  description: z.string().trim().max(500).default('').openapi({ example: 'Seats 10, projector included' }),
+  type: z.enum(RESOURCE_TYPES).default('Other').openapi({ example: 'Room' })
 }).openapi('CreateItem')
 
 const ItemParamsSchema = z.object({
@@ -123,9 +129,55 @@ const deleteItemRoute = createRoute({
   }
 })
 
-const toItemResponse = (item: { id: number; title: string; createdAt: Date }) => ({
+const UpdateItemSchema = z.object({
+  title: z.string().trim().min(1).max(120).optional().openapi({ example: 'Meeting Room A' }),
+  description: z.string().trim().max(500).optional().openapi({ example: 'Seats 10, projector included' }),
+  type: z.enum(RESOURCE_TYPES).optional().openapi({ example: 'Room' })
+}).refine(
+  (data) => Object.keys(data).length > 0,
+  { message: 'At least one field must be provided' }
+).openapi('UpdateItem')
+
+const updateItemRoute = createRoute({
+  method: 'patch',
+  path: '/items/{id}',
+  tags: ['Items'],
+  request: {
+    params: ItemParamsSchema,
+    body: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: UpdateItemSchema
+        }
+      }
+    }
+  },
+  responses: {
+    200: {
+      description: 'Update a persisted resource',
+      content: {
+        'application/json': {
+          schema: ItemSchema
+        }
+      }
+    },
+    404: {
+      description: 'Resource not found',
+      content: {
+        'application/json': {
+          schema: z.object({ message: z.string() }).openapi('NotFound')
+        }
+      }
+    }
+  }
+})
+
+const toItemResponse = (item: { id: number; title: string; description: string; type: string; createdAt: Date }) => ({
   id: item.id,
   title: item.title,
+  description: item.description,
+  type: item.type as typeof RESOURCE_TYPES[number],
   createdAt: item.createdAt.toISOString()
 })
 
@@ -178,11 +230,9 @@ app.openapi(listItemsRoute, async (c) => {
 })
 
 app.openapi(createItemRoute, async (c) => {
-  const { title } = c.req.valid('json')
+  const { title, description, type } = c.req.valid('json')
   const item = await prisma.item.create({
-    data: {
-      title
-    }
+    data: { title, description, type }
   })
 
   return c.json(toItemResponse(item), 201)
@@ -198,6 +248,24 @@ app.openapi(deleteItemRoute, async (c) => {
   })
 
   return c.body(null, 204)
+})
+
+app.openapi(updateItemRoute, async (c) => {
+  const { id } = c.req.valid('param')
+  const data = c.req.valid('json')
+
+  try {
+    const item = await prisma.item.update({
+      where: { id },
+      data
+    })
+    return c.json(toItemResponse(item), 200)
+  } catch (e: unknown) {
+    if ((e as { code?: string }).code === 'P2025') {
+      return c.json({ message: 'Resource not found' }, 404)
+    }
+    throw e
+  }
 })
 
 export type AppType = typeof app
