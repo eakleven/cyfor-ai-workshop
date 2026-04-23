@@ -451,7 +451,75 @@
       </aside>
     </section>
 
-    <!-- ═══════════════════ SLIDE 14 – Avslutning ═══════════════════ -->
+    <!-- ═══════════════════ SLIDE 14 – Sub-agents ═══════════════════ -->
+    <section data-bg="soft">
+      <h1>Sub-agents i praksis</h1>
+      <h2>Tre måter å dele opp arbeidet på</h2>
+      <div class="subagent-layout">
+        <div class="subagent-stage">
+          <figure class="agent-layer base">
+            <figcaption>
+              <span class="agent-label">1. One agent</span>
+              <h3>Alt i samme kontekst</h3>
+            </figcaption>
+            <img src="assets/one-agent.png" alt="Illustrasjon av én agent som bruker samme kontekst til alt arbeid">
+          </figure>
+          <figure class="agent-layer series fragment" data-fragment-index="1">
+            <figcaption>
+              <span class="agent-label">2. Series</span>
+              <h3>Del opp arbeidet i steg</h3>
+            </figcaption>
+            <img src="assets/agent-series.png" alt="Illustrasjon av sub-agents som jobber i serie">
+          </figure>
+          <figure class="agent-layer parallel fragment" data-fragment-index="2">
+            <figcaption>
+              <span class="agent-label">3. Parallel</span>
+              <h3>Kjør uavhengige spor samtidig</h3>
+            </figcaption>
+            <img src="assets/agent-parallel.png" alt="Illustrasjon av sub-agents som jobber parallelt">
+          </figure>
+        </div>
+
+        <div class="subagent-copy">
+          <div class="info-panel">
+            <p class="eyebrow">1. One agent</p>
+            <h3>Enkelt å starte med</h3>
+            <ul class="compact-list">
+              <li>Alt skjer i samme kontekst: chat, søk, verktøykall og output.</li>
+              <li>Fungerer for små oppgaver, men metter fort kontekstvinduet.</li>
+            </ul>
+          </div>
+          <div class="info-panel accent fragment" data-fragment-index="1">
+            <p class="eyebrow">2. Series</p>
+            <h3>Når steg bygger på hverandre</h3>
+            <ul class="compact-list">
+              <li>Hver sub-agent får ett tydelig steg og leverer videre til neste.</li>
+              <li>Passer når plan, research og implementasjon bygger på hverandre.</li>
+            </ul>
+          </div>
+          <div class="info-panel dark fragment" data-fragment-index="2">
+            <p class="eyebrow">3. Parallel</p>
+            <h3>Når ting kan gjøres uavhengig</h3>
+            <ul class="compact-list">
+              <li>Uavhengige spor kan kjøres samtidig for å spare tid.</li>
+              <li>Hovedagenten samler svarene og holder helheten samlet.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <aside class="notes">
+        <ul>
+          <li>Denne sliden konkretiserer hva vi mener med orkestrering i task 4</li>
+          <li>Start med én agent når oppgaven er liten og sammenhengende</li>
+          <li>Bruk serie når hvert steg er avhengig av forrige leveranse</li>
+          <li>Bruk parallellisering når flere spor kan undersøkes eller implementeres uavhengig</li>
+          <li>Poenget er ikke flest mulig agenter, men mindre kontekst per oppgave og tydeligere ansvar</li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- ═══════════════════ SLIDE 15 – Avslutning ═══════════════════ -->
     <section data-bg="hero" class="end-slide">
       <img src="assets/Sopra-Steria_logo_RGB_white.png" alt="Sopra Steria" class="slide-logo">
       <h1>Det vi egentlig bygger</h1>

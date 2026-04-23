@@ -205,6 +205,17 @@ section[data-bg="hero"] .eyebrow {
   background: var(--ss-gradient);
 }
 
+.compact-list {
+  margin: 0;
+  padding-left: 1.05rem;
+}
+
+.compact-list li {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  margin-bottom: 0.3rem;
+}
+
 .step-no {
   align-items: center;
   background: var(--ss-purple);
@@ -258,6 +269,7 @@ section[data-bg="hero"] .eyebrow {
 .info-panel.dark::before { display: none; }
 .info-panel.dark h3,
 .info-panel.dark p,
+.info-panel.dark li,
 .info-panel.dark code { color: #fff; }
 .info-panel.dark code  { background: rgba(255, 255, 255, 0.15); }
 
@@ -305,12 +317,103 @@ section[data-bg="hero"] .eyebrow {
   flex-shrink: 0;
 }
 
+.subagent-layout {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: 1.65fr 0.95fr;
+  margin-top: 1rem;
+}
+
+.subagent-stage {
+  min-height: 31rem;
+  position: relative;
+}
+
+.agent-layer {
+  --agent-rotation: 0deg;
+  background: #fff;
+  border: 1.5px solid rgba(77, 29, 130, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 12px 28px rgba(77, 29, 130, 0.14);
+  left: 0;
+  margin: 0;
+  padding: 0.9rem;
+  position: absolute;
+  top: 0;
+  transform: rotate(var(--agent-rotation));
+  width: min(calc(100% - 4.5rem), 40rem);
+}
+
+.agent-layer img {
+  border-radius: 0.7rem;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.agent-layer figcaption {
+  margin-bottom: 0.6rem;
+}
+
+.agent-layer.base {
+  --agent-rotation: -1.2deg;
+  top: 0.4rem;
+  z-index: 1;
+}
+
+.agent-layer.series {
+  --agent-rotation: 0.8deg;
+  left: 2rem;
+  top: 2.4rem;
+  z-index: 2;
+}
+
+.agent-layer.parallel {
+  --agent-rotation: 1.8deg;
+  left: 4rem;
+  top: 4.4rem;
+  z-index: 3;
+}
+
+.agent-label {
+  color: var(--ss-orange);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+}
+
+.agent-layer h3 {
+  margin: 0;
+}
+
+.subagent-copy {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.subagent-copy .info-panel ul {
+  margin-top: 0.55rem;
+}
+
 /* ─── End-slide variant ─── */
 .end-slide .hero-block {
   max-width: 52rem;
 }
 
 /* ─── Fragment animations ─── */
+.reveal .slides section .fragment.agent-layer {
+  opacity: 0;
+  transform: translate(30px, 18px) rotate(var(--agent-rotation));
+  transition: all 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal .slides section .fragment.agent-layer.visible {
+  opacity: 1;
+  transform: rotate(var(--agent-rotation));
+}
+
 .reveal .slides section .fragment.brand-card {
   opacity: 0;
   transform: translateY(14px);
@@ -344,5 +447,25 @@ section[data-bg="hero"] .eyebrow {
   .card-grid.four,
   .two-panel {
     grid-template-columns: 1fr;
+  }
+
+  .subagent-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .subagent-stage {
+    min-height: 26rem;
+  }
+
+  .agent-layer {
+    width: min(calc(100% - 2rem), 32rem);
+  }
+
+  .agent-layer.series {
+    left: 1rem;
+  }
+
+  .agent-layer.parallel {
+    left: 2rem;
   }
 }
