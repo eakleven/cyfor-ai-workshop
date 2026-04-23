@@ -82,6 +82,25 @@ const formatDateTime = (value: string) =>
     timeStyle: "short",
   });
 
+const csvEscape = (value: string | number) => `"${String(value).replace(/"/g, '""')}"`;
+
+const formatCsvTimestamp = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString();
+};
+
+const RESERVATION_EXPORT_HEADERS = [
+  "reservationId",
+  "resourceTitle",
+  "resourceType",
+  "startTime",
+  "endTime",
+  "reserverName",
+  "purpose",
+  "status",
+  "createdTime",
+] as const;
+
 const overlaps = (startA: string, endA: string, startB: string, endB: string) =>
   new Date(startA).getTime() < new Date(endB).getTime() &&
   new Date(endA).getTime() > new Date(startB).getTime();
@@ -201,6 +220,49 @@ export default function App() {
       return true;
     })
     .sort((left, right) => new Date(left.startAt).getTime() - new Date(right.startAt).getTime());
+
+  const reservationExportRows = useMemo(
+    () =>
+      reservationsWithResources.map((reservation) => ({
+        reservationId: reservation.id,
+        resourceTitle: reservation.resource?.title ?? `Ressurs #${reservation.itemId}`,
+        resourceType: reservation.resource?.type
+          ? TYPE_LABELS[reservation.resource.type] ?? reservation.resource.type
+          : "Ukjent",
+        startTime: formatCsvTimestamp(reservation.startAt),
+        endTime: formatCsvTimestamp(reservation.endAt),
+        reserverName: reservation.reserverName,
+        purpose: reservation.purpose,
+        status:
+          RESERVATION_STATUS_LABELS[
+            (reservation.status as (typeof RESERVATION_STATUSES)[number]) ?? ReservationStatus.Draft
+          ] ?? reservation.status,
+        createdTime: formatCsvTimestamp(reservation.createdAt),
+      })),
+    [reservationsWithResources],
+  );
+
+  const handleExportReservations = () => {
+    if (reservationExportRows.length === 0) return;
+
+    const csvContent = [
+      RESERVATION_EXPORT_HEADERS.join(","),
+      ...reservationExportRows.map((row) =>
+        RESERVATION_EXPORT_HEADERS.map((header) => csvEscape(row[header])).join(","),
+      ),
+    ].join("\r\n");
+    const blob = new Blob(["\uFEFF", csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+
+    link.href = url;
+    link.download = `reservasjoner-${timestamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
 
   const handleCreate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -586,13 +648,23 @@ export default function App() {
 
         <section className="border border-fv-border bg-fv-card p-4">
           <div className="flex flex-col gap-3">
-            <div className="space-y-1">
-              <h2 className="text-sm font-medium uppercase tracking-wider text-fv-text-muted">
-                Reservasjoner
-              </h2>
-              <p className="text-sm text-fv-text-muted">
-                Filtrer oversikten og oppdater status etter hvert som reservasjonene behandles.
-              </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="space-y-1">
+                <h2 className="text-sm font-medium uppercase tracking-wider text-fv-text-muted">
+                  Reservasjoner
+                </h2>
+                <p className="text-sm text-fv-text-muted">
+                  Filtrer oversikten og oppdater status etter hvert som reservasjonene behandles.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleExportReservations}
+                disabled={reservationExportRows.length === 0}
+                className="border border-fv-border bg-fv-card px-3 py-2 text-sm text-fv-text hover:border-fv-green hover:text-fv-green disabled:cursor-not-allowed disabled:border-fv-border disabled:text-fv-text-muted"
+              >
+                Eksporter CSV
+              </button>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
