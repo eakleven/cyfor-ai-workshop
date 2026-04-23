@@ -11,9 +11,6 @@
     "start": "npm run prisma:generate && npm run prisma:sync && node dist/src/index.js",
     "test": "vitest run"
   },
-  "vitest": {
-    "environment": "node"
-  },
   "dependencies": {
     "@hono/node-server": "^1.19.14",
     "@hono/zod-openapi": "^0.19.10",

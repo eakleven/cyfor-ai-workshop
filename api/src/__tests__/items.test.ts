@@ -110,6 +110,7 @@ describe('DELETE /items/:id', () => {
     mockPrisma.item.deleteMany.mockResolvedValue({ count: 1 })
     const res = await app.request('/items/1', { method: 'DELETE' })
     expect(res.status).toBe(204)
+    expect(mockPrisma.item.deleteMany).toHaveBeenCalledWith({ where: { id: 1 } })
   })
 
   it('returns 400 for non-integer id', async () => {
