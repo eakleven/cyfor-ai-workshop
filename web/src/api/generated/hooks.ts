@@ -115,6 +115,21 @@ export interface UpdateItem {
   type?: UpdateItemType;
 }
 
+export type GetItemsParams = {
+search?: string;
+type?: GetItemsType;
+};
+
+export type GetItemsType = typeof GetItemsType[keyof typeof GetItemsType];
+
+
+export const GetItemsType = {
+  Room: 'Room',
+  Equipment: 'Equipment',
+  Vehicle: 'Vehicle',
+  Other: 'Other',
+} as const;
+
 export const get = (
 
  signal?: AbortSignal
@@ -290,13 +305,14 @@ export function useGetHealth<TData = Awaited<ReturnType<typeof getHealth>>, TErr
 
 
 export const getItems = (
-
+    params?: GetItemsParams,
  signal?: AbortSignal
 ) => {
 
 
       return customClient<ItemListResponse>(
-      {url: `/items`, method: 'GET', signal
+      {url: `/items`, method: 'GET',
+        params, signal
     },
       );
     }
@@ -304,23 +320,23 @@ export const getItems = (
 
 
 
-export const getGetItemsQueryKey = () => {
+export const getGetItemsQueryKey = (params?: GetItemsParams,) => {
     return [
-    `/items`
+    `/items`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetItemsQueryOptions = <TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
+export const getGetItemsQueryOptions = <TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>(params?: GetItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
 ) => {
 
 const {query: queryOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetItemsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetItemsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getItems>>> = ({ signal }) => getItems(signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getItems>>> = ({ signal }) => getItems(params, signal);
 
 
 
@@ -334,7 +350,7 @@ export type GetItemsQueryError = ErrorType<unknown>
 
 
 export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>> & Pick<
+ params: undefined |  GetItemsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItems>>,
           TError,
@@ -344,7 +360,7 @@ export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>> & Pick<
+ params?: GetItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItems>>,
           TError,
@@ -354,16 +370,16 @@ export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
+ params?: GetItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetItems<TData = Awaited<ReturnType<typeof getItems>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
+ params?: GetItemsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItems>>, TError, TData>>, }
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetItemsQueryOptions(options)
+  const queryOptions = getGetItemsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

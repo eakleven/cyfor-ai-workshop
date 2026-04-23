@@ -207,6 +207,32 @@
         "tags": [
           "Items"
         ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "Meeting Room"
+            },
+            "required": false,
+            "name": "search",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Room",
+                "Equipment",
+                "Vehicle",
+                "Other"
+              ],
+              "example": "Room"
+            },
+            "required": false,
+            "name": "type",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "List persisted items",
